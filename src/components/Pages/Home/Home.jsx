@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ProductList from "../../ProductList/ProductList";
 import { getProducts } from "../../Services/Api";
-import Header from "../../Layouts/Header/Header";
-import Footer from "../../Layouts/Footer/Footer";
 
-export const Home = () => {
+export const Home = ({ addToCart, filter, setFilter }) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -19,13 +17,21 @@ export const Home = () => {
     fetchProducts();
   }, []);
 
+  const filteredProducts = products.filter((product) =>
+    product.title.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
-    <div>
-      <Header />
-      <div className="container mx-auto px-4 py-8">
-        <ProductList products={products} />
-      </div>
-      <Footer />
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-semibold mb-8">FakeStore E-commerce</h1>
+      <input
+        type="text"
+        placeholder="Search..."
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        className="mb-4 p-2 border border-gray-300 rounded"
+      />
+      <ProductList products={filteredProducts} addToCart={addToCart} />
     </div>
   );
 };
