@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Pages/Home/Home";
 import Header from "./components/Layouts/Header/Header";
 import Footer from "./components/Layouts/Footer/Footer";
@@ -23,12 +23,8 @@ function App() {
       <div className="App">
         <Header cart={cart} />
         <Routes>
-          <Route exact path="/">
-            <Home addToCart={addToCart} filter={filter} setFilter={setFilter} />
-          </Route>
-          <Route path="/cart">
-            <Cart cart={cart} removeFromCart={removeFromCart} />
-          </Route>
+          <Route path="/" element={<Home addToCart={addToCart} filter={filter} setFilter={setFilter} />} />
+          <Route path="/cart" element={<Cart cart={cart} removeFromCart={removeFromCart} />} />
         </Routes>
         <Footer />
       </div>

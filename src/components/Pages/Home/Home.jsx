@@ -1,25 +1,36 @@
 import React, { useState, useEffect } from "react";
 import ProductList from "../../ProductList/ProductList";
-import { getProducts } from "../../Services/Api";
+import { getProducts, getCategories } from "../../Services/Api";
 
-export const Home = ({ addToCart, filter, setFilter }) => {
+const Home = ({ addToCart, filter, setFilter }) => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
+      const data = await getProducts();
+      setProducts(data);
     };
+
+    const fetchCategories = async () => {
+      const data = await getCategories();
+      setCategories(data);
+    };
+
     fetchProducts();
+    fetchCategories();
   }, []);
 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(filter.toLowerCase())
-  );
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  const filteredProducts = products.filter((product) => {
+    const matchesFilter = product.title.toLowerCase().includes(filter.toLowerCase());
+    const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
+    return matchesFilter && matchesCategory;
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -29,8 +40,24 @@ export const Home = ({ addToCart, filter, setFilter }) => {
         placeholder="Search..."
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
-        className="mb-4 p-2 border border-gray-300 rounded"
+        className="mb-4 p-2 border border-gray-300 rounded text-black placeholder-black"
       />
+      <div className="mb-4">
+        <label htmlFor="categories" className="block text-white">Categories:</label>
+        <select
+          id="categories"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          className="p-2 border border-gray-300 rounded text-black"
+        >
+          <option value="" className="text-black">All</option>
+          {categories.map((category) => (
+            <option key={category} value={category} className="text-black">
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
       <ProductList products={filteredProducts} addToCart={addToCart} />
     </div>
   );
